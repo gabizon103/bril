@@ -447,6 +447,9 @@ function evalCall(instr: bril.Operation, state: State): Action {
  * instruction or "end" to terminate the function.
  */
 function evalInstr(instr: bril.Instruction, state: State): Action {
+
+  console.log(JSON.stringify(instr));
+
   state.icount += BigInt(1);
 
   // Check that we have the right number of arguments.
@@ -834,7 +837,17 @@ function evalFunc(func: bril.Function, state: State): Value | null {
     const line = func.instrs[i];
     if ("op" in line) {
       // Run an instruction.
+      if (func.name == "main" && i == 0) {
+        // do nothing
+      } else {
+        console.log(",")
+      }
       const action = evalInstr(line, state);
+      // if (func.name == "main" && i == func.instrs.length-1) {
+      //   // nothing
+      // } else {
+      //   console.log(",")
+      // }
 
       // Take the prescribed action.
       switch (action.action) {
@@ -1001,7 +1014,9 @@ function evalProg(prog: bril.Program) {
     ssaEnv: new Map(),
     specparent: null,
   };
+  console.log(" { instrs: [")
   evalFunc(main, state);
+  console.log(" ]}")
 
   if (!heap.isEmpty()) {
     throw error(
